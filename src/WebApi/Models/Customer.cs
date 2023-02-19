@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using WebApi.Abstractions;
 
 namespace WebApi.Models
 {
-    public class Customer
+    public class Customer : BaseEntity
     {
-        public long Id { get; init; }
-        
         [Required]
         public string Firstname { get; init; }
 
