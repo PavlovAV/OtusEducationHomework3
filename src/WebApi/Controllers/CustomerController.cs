@@ -1,6 +1,7 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Abstractions;
 using WebApi.Models;
@@ -22,7 +23,7 @@ namespace WebApi.Controllers
             var customer = await _customerRepository.GetAsync(id);
             if (customer == null)
             {
-                return NotFound("Покупатель с таким id не существует");
+                return NotFound("РџРѕРєСѓРїР°С‚РµР»СЊ СЃ С‚Р°РєРёРј id РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚");
             }
 
             return Ok(customer);
@@ -31,15 +32,17 @@ namespace WebApi.Controllers
         [HttpPost("")]   
         public async Task<ActionResult<long>> CreateCustomerAsync([FromBody] Customer customer)
         {
-            //var rnd = new Random();
-            //customer.Id = rnd.Next(1, 100);
+            if (customer == null)
+            {
+                return BadRequest();
+            }
             var existCustomer = await _customerRepository.GetAsync(customer.Id);
             if (existCustomer != null)
             {
-                return Conflict("Покупатель с id " + customer.Id + " уже существует");
+                return Conflict($"РџРѕРєСѓРїР°С‚РµР»СЊ СЃ id {customer.Id} СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚");
             }
             await _customerRepository.AddAsync(customer);
-            return Ok(customer.Id);
+            return new ObjectResult(customer.Id) { StatusCode = StatusCodes.Status201Created };
         }
 
         [HttpGet]
@@ -49,15 +52,19 @@ namespace WebApi.Controllers
         }
 
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> PutCustomerAsync(long id, [FromBody] Customer entity)
+        public async Task<IActionResult> PutCustomerAsync(long id, [FromBody] Customer customer)
         {
-            var customer = await _customerRepository.GetAsync(id);
             if (customer == null)
             {
-                return NotFound("Покупатель с таким id не существует");
+                return BadRequest();
+            }
+            var existCustomer = await _customerRepository.GetAsync(id);
+            if (existCustomer == null)
+            {
+                return NotFound("РџРѕРєСѓРїР°С‚РµР»СЊ СЃ С‚Р°РєРёРј id РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚");
             }
 
-            await _customerRepository.UpdateAsync(entity);
+            await _customerRepository.UpdateAsync(customer);
             return Ok();
         }
 
@@ -67,7 +74,7 @@ namespace WebApi.Controllers
             var customer = await _customerRepository.GetAsync(id);
             if (customer == null)
             {
-                return NotFound("Покупатель с таким id не существует");
+                return NotFound("РџРѕРєСѓРїР°С‚РµР»СЊ СЃ С‚Р°РєРёРј id РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚");
             }
 
             await _customerRepository.DeleteAsync(id);
