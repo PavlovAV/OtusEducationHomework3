@@ -34,7 +34,7 @@ namespace WebApi.Controllers
         {
             if (customer == null)
             {
-                return BadRequest();
+                return BadRequest("Отстутсвуют входные данные для добавления нового покупателя");
             }
             var existCustomer = await _customerRepository.GetAsync(customer.Id);
             if (existCustomer != null)
@@ -56,7 +56,7 @@ namespace WebApi.Controllers
         {
             if (customer == null)
             {
-                return BadRequest();
+                return BadRequest("Отстутсвуют входные данные для изменения покупателя");
             }
             var existCustomer = await _customerRepository.GetAsync(id);
             if (existCustomer == null)
